@@ -21,6 +21,7 @@ public class Emprestimo {
     private LocalDate data;
     private LocalDate dataPrevistaEntrega;
     private LocalDate dataEntrega;
+    @OneToOne
     private Leitor leitor;
     @OneToOne
     private Copia copia;

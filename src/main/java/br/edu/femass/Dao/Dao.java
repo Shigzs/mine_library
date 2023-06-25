@@ -14,7 +14,7 @@ public class Dao<E> {
     protected Class<E> entity;
 
     static {
-        emf = Persistence.createEntityManagerFactory("jpa_exemplo");
+        emf = Persistence.createEntityManagerFactory("prova_prog3");
     }
     public Dao(Class<E> entity) {
         em = emf.createEntityManager();

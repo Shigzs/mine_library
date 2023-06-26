@@ -2,7 +2,6 @@ package br.edu.femass.Controller;
 
 import java.net.URL;
 import java.time.LocalDate;
-import java.util.List;
 import java.util.ResourceBundle;
 
 import br.edu.femass.Dao.CopiaDao;
@@ -10,7 +9,6 @@ import br.edu.femass.Dao.Dao;
 import br.edu.femass.Diversos.DiversosJavaFX;
 import br.edu.femass.model.Copia;
 import br.edu.femass.model.Emprestimo;
-import br.edu.femass.model.Genero;
 import br.edu.femass.model.Leitor;
 import br.edu.femass.model.Livro;
 import javafx.collections.FXCollections;

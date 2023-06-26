@@ -8,10 +8,11 @@ import java.util.ResourceBundle;
 import br.edu.femass.Dao.CopiaDao;
 import br.edu.femass.Dao.Dao;
 import br.edu.femass.Diversos.DiversosJavaFX;
-import br.edu.femass.model.Leitor.Emprestimo;
-import br.edu.femass.model.Leitor.Leitor;
-import br.edu.femass.model.Livro.Copia;
-import br.edu.femass.model.Livro.Livro;
+import br.edu.femass.model.Copia;
+import br.edu.femass.model.Emprestimo;
+import br.edu.femass.model.Genero;
+import br.edu.femass.model.Leitor;
+import br.edu.femass.model.Livro;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
@@ -27,18 +28,18 @@ import javafx.scene.input.MouseEvent;
 public class EmprestimoController implements Initializable {
     @FXML
     public TextField Txt_Id;
-    @FXML
-    public TextField Txt_Copias;
-    @FXML
+   @FXML
     public DatePicker DP_Data;
     @FXML
     public DatePicker DP_DataPrevistaEntrega;
     @FXML
     public DatePicker DP_DataEntrega;
+     @FXML
+    public ComboBox<Copia> ComboBox_Copias;
     @FXML
     public ComboBox<Livro> ComboBox_Livros;
     @FXML
-    public ComboBox<Leitor> ComoboBox_Leitores;
+    public ComboBox<Leitor> ComboBox_Leitores;
     @FXML
     public ListView<Emprestimo> Lista_Emprestimo;
     
@@ -50,9 +51,20 @@ public class EmprestimoController implements Initializable {
     @Override
     public void initialize(URL location, ResourceBundle resources) {
         preencherListaEmprestimos();
-        preencherComoboBox_Leitores();
+        preencherComboBox_Leitores();
         preencherComboBox_Livros();
         limparCampos();
+    }
+    
+    public boolean validar(){
+        if(
+            ComboBox_Livros.getValue()==null ||
+            ComboBox_Leitores.getValue()==null ||
+            DP_Data.getValue()==null
+        ){
+            return false;
+        }
+        return true;
     }
 
     private void preencherListaEmprestimos() {
@@ -80,35 +92,51 @@ public class EmprestimoController implements Initializable {
         }
     }
 
-    private void preencherComoboBox_Leitores() {
+    private void preencherComboBox_Leitores() {
         try {
             ObservableList<Leitor> list = FXCollections.observableArrayList(
                     leitorDao.findAll()
             );
-            ComoboBox_Leitores.setItems(list);
+            ComboBox_Leitores.setItems(list);
         } catch (Exception e) {
             e.printStackTrace();
             DiversosJavaFX.exibirMensagem(e.getMessage());
         }
     }
 
-    private void limparCampos() {
-        Txt_Id.setText("");
-        atualizaTxt_Copias(ComboBox_Livros.getSelectionModel().getSelectedItem());
-        DP_Data.setValue(LocalDate.now());
-        DP_DataPrevistaEntrega.setValue(LocalDate.now().plusDays(5L));
-        DP_DataEntrega.setValue(null);
-        Lista_Emprestimo
-.getSelectionModel().clearSelection();
+    private void preencherComboBox_Copias(Livro livro) {
+        try {
+            ObservableList<Copia> list = FXCollections.observableArrayList(
+                    livro.getCopias()
+            );
+            ComboBox_Copias.setItems(list);
+        } catch (Exception e) {
+            e.printStackTrace();
+            DiversosJavaFX.exibirMensagem(e.getMessage());
+        }
     }
 
     @FXML
-    public void Lista_Emprestimos_keypressd(KeyEvent keyEvent) {
+    private void ComboBox_Livros_Selecionar_Livro(ActionEvent actionEvent){
+        preencherComboBox_Copias(ComboBox_Livros.getSelectionModel().getSelectedItem());
+    }
+
+    private void limparCampos() {
+        Txt_Id.setText("");
+        ComboBox_Copias.getSelectionModel().clearSelection();
+        DP_Data.setValue(LocalDate.now());
+        DP_DataPrevistaEntrega.setValue(null);
+        DP_DataEntrega.setValue(null);
+        Lista_Emprestimo.getSelectionModel().clearSelection();
+    }
+
+    @FXML
+    public void Lista_emprestimo_keypressed(KeyEvent keyEvent) {
         exibeDadosEmprestimoSelecionado();
     }
 
     @FXML
-    public void Lista_Emprestimos_mouseclicked(MouseEvent mouseEvent) {
+    public void Lista_emprestimo_mouseclicked(MouseEvent mouseEvent) {
         exibeDadosEmprestimoSelecionado();
     }
 
@@ -120,101 +148,92 @@ public class EmprestimoController implements Initializable {
     }
 
     private void exibeDadosEmprestimoSelecionado() {
-        Emprestimo emprestimo = Lista_Emprestimo
-.getSelectionModel().getSelectedItem();
+        Emprestimo emprestimo = Lista_Emprestimo.getSelectionModel().getSelectedItem();
         if (emprestimo == null) return;
 
         Txt_Id.setText(emprestimo.getId().toString());
-        atualizaTxt_Copias(emprestimo.getCopia().getLivro());
+        ComboBox_Copias.getSelectionModel().select(emprestimo.getCopia());
         DP_Data.setValue(emprestimo.getData());
         DP_DataPrevistaEntrega.setValue(emprestimo.getDataPrevistaEntrega());
         DP_DataEntrega.setValue(emprestimo.getDataEntrega());
         ComboBox_Livros.getSelectionModel().select(buscaLivroEmprestimo(emprestimo));
-        ComoboBox_Leitores.getSelectionModel().select(emprestimo.getLeitor());
+        ComboBox_Leitores.getSelectionModel().select(emprestimo.getLeitor());
     }
 
     @FXML
-    public void ExcluirButton(ActionEvent actionEvent) {
-    }
-
-    @FXML
-    public void handleLimparButtonAction(ActionEvent actionEvent) {
-        limparCampos();
-    }
-
-    private boolean validaCampos(boolean ehAtualizacao){
-        boolean datasPreenchidas = 
-        DP_Data.getValue() != null && 
-        DP_DataPrevistaEntrega.getValue()!= null;
-        if(ehAtualizacao) datasPreenchidas = datasPreenchidas &&  DP_DataEntrega.getValue()!=null;
-        boolean leitorELivroSelecionados = ComoboBox_Leitores.getSelectionModel().getSelectedItem()!=null && ComboBox_Livros.getSelectionModel().getSelectedItem()!=null;
-        boolean haCopiaParaEmprestimo = Integer.parseInt(Txt_Copias.getText()) > 1 || ehAtualizacao;
-        return datasPreenchidas && leitorELivroSelecionados && haCopiaParaEmprestimo;
-    }
-
-    private void criaEmprestimo(){
-        Emprestimo emprestimo = new Emprestimo();
-        emprestimo.setData(LocalDate.now());
-        emprestimo.setDataPrevistaEntrega(DP_DataPrevistaEntrega.getValue());
-        emprestimo.setLeitor(ComoboBox_Leitores.getSelectionModel().getSelectedItem());
-        List<Copia> copiasDisponiveis = copiaDao.buscaCopiasDisponiveisPorLivro(ComboBox_Livros.getSelectionModel().getSelectedItem());
-        Copia copiaSelecionada = copiasDisponiveis.get(0);
-        copiaSelecionada.setDisponivel(false);
-        copiaDao.update(copiaSelecionada);
-        emprestimo.setCopia(copiaSelecionada);
-        
-        emprestimoDao.create(emprestimo);
-    }
-
-    private void atualizaEmprestimo(){
-        Emprestimo emprestimo = Lista_Emprestimo
-.getSelectionModel().getSelectedItem();
-        Copia copiaEmprestada = emprestimo.getCopia();
-        copiaEmprestada.setDisponivel(true);
-        emprestimo.setCopia(copiaEmprestada);
-        emprestimo.setDataEntrega(DP_DataEntrega.getValue());
-        emprestimoDao.update(emprestimo);
-    }
-
-    @FXML
-    public void handleGravarButtonAction(ActionEvent actionEvent) {
+    public void Btn_Deletar(ActionEvent actionEvent) {
+        Emprestimo emprestimo = Lista_Emprestimo.getSelectionModel().getSelectedItem();
+        if (emprestimo == null) return;
         try {
-            if(validaCampos(Txt_Id.getText().length() > 0)){
-                if(Txt_Id.getText().length() == 0){
-                    criaEmprestimo();
-                }else{
-                    atualizaEmprestimo();
-                }
-                limparCampos();
-                preencherListaEmprestimos();
-            }else{
-                DiversosJavaFX.exibirMensagem("Verifique se os campos foram preenchidos corretamente");
-            }
+            emprestimoDao.delete(emprestimo.getId());
+            limparCampos();
+            preencherListaEmprestimos();
         } catch (Exception e) {
             e.printStackTrace();
             DiversosJavaFX.exibirMensagem(e.getMessage());
         }
     }
 
-    private void atualizaTxt_Copias(Livro livro) {
-        Txt_Copias.setText(String.valueOf(copiaDao.buscaCopiasDisponiveisPorLivro(livro).size()));
+    @FXML
+    public void Btn_Devolver(ActionEvent actionEvent) {
+        Emprestimo emprestimo = Lista_Emprestimo.getSelectionModel().getSelectedItem();
+        if (emprestimo == null) return;
+        try {
+            Copia copiaDevolvida = emprestimo.getCopia();
+            copiaDevolvida.setDisponivel(true);
+            emprestimo.setDataEntrega(LocalDate.now());
+        } catch (Exception e) {
+            e.printStackTrace();
+            DiversosJavaFX.exibirMensagem(e.getMessage());
+        }
+    }
+
+    private void criaEmprestimo(){
+        Emprestimo emprestimo = new Emprestimo();
+        emprestimo.setData(LocalDate.now());
+        emprestimo.setDataPrevistaEntrega(DP_DataPrevistaEntrega.getValue());
+        emprestimo.setLeitor(ComboBox_Leitores.getSelectionModel().getSelectedItem());
+        Copia copiaSelecionada = ComboBox_Copias.getSelectionModel().getSelectedItem();
+        copiaSelecionada.setDisponivel(false);
+        copiaDao.update(copiaSelecionada);
+        emprestimo.setCopia(copiaSelecionada);
+        emprestimoDao.create(emprestimo);
+    }
+
+    private void atualizaEmprestimo(){
+        Emprestimo emprestimo = Lista_Emprestimo.getSelectionModel().getSelectedItem();
+        Copia copiaDevolvida = emprestimo.getCopia();
+        copiaDevolvida.setDisponivel(true);
+        Copia copiaEmprestada = ComboBox_Copias.getSelectionModel().getSelectedItem();
+        copiaEmprestada.setDisponivel(false);
+        emprestimo.setCopia(copiaEmprestada);
+        emprestimoDao.update(emprestimo);
     }
 
     @FXML
-    public void handleComboBox_LivrosAction(ActionEvent actionEvent) {
+    public void Btn_Gravar(ActionEvent actionEvent) {
         try {
-            atualizaTxt_Copias(ComboBox_Livros.getSelectionModel().getSelectedItem());
+            if(Txt_Id.getText().length() == 0){
+                criaEmprestimo();
+            }else{
+                atualizaEmprestimo();
+            }
+            limparCampos();
+            preencherListaEmprestimos();
+            //DiversosJavaFX.exibirMensagem("Verifique se os campos foram preenchidos corretamente");
+        } catch (Exception e) {
+            e.printStackTrace();
+            DiversosJavaFX.exibirMensagem(e.getMessage());
+        }
+    }
+
+    @FXML
+    public void handleComboBox_LeitoresAction(ActionEvent actionEvent) {
+        try {
+            DP_DataPrevistaEntrega.setValue(LocalDate.now().plusDays(ComboBox_Leitores.getSelectionModel().getSelectedItem().getDiasDeEmprestimo()));
         } catch (Exception e) {
             e.printStackTrace();
         }
     }
 
-    @FXML
-    public void handleComoboBox_LeitoresAction(ActionEvent actionEvent) {
-        try {
-            DP_DataPrevistaEntrega.setValue(LocalDate.now().plusDays(ComoboBox_Leitores.getSelectionModel().getSelectedItem().getDiasDeEmprestimo()));
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-    }
 }

@@ -15,7 +15,7 @@ import java.util.ResourceBundle;
 
 import br.edu.femass.Dao.Dao;
 import br.edu.femass.Diversos.DiversosJavaFX;
-import br.edu.femass.model.Livro.Autor;
+import br.edu.femass.model.Autor;
 
 public class AutorController implements Initializable {
     @FXML
@@ -72,7 +72,7 @@ public class AutorController implements Initializable {
     }
 
     @FXML
-    public void ExcluirButton(ActionEvent actionEvent) {
+    public void Btn_Deletar(ActionEvent actionEvent) {
         Autor autor = Lista_Autor.getSelectionModel().getSelectedItem();
         if (autor == null) return;
         try {
@@ -101,7 +101,7 @@ public class AutorController implements Initializable {
     }
 
     @FXML
-    public void GravarButton(ActionEvent actionEvent) {
+    public void Btn_Gravar(ActionEvent actionEvent) {
         try {
             if (camposEstaoValidos()) {
                 if (Txt_Id.getText().trim().length() == 0) {

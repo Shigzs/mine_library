@@ -16,10 +16,10 @@ import java.util.ResourceBundle;
 
 import br.edu.femass.Dao.Dao;
 import br.edu.femass.Diversos.DiversosJavaFX;
-import br.edu.femass.model.Livro.Autor;
-import br.edu.femass.model.Livro.Copia;
-import br.edu.femass.model.Livro.Genero;
-import br.edu.femass.model.Livro.Livro;
+import br.edu.femass.model.Autor;
+import br.edu.femass.model.Copia;
+import br.edu.femass.model.Genero;
+import br.edu.femass.model.Livro;
 
 public class LivroController implements Initializable {
     @FXML
@@ -120,7 +120,7 @@ public class LivroController implements Initializable {
     }
 
     @FXML
-    public void ExcluirButton(ActionEvent actionEvent) {
+    public void Btn_Deletar(ActionEvent actionEvent) {
         Livro Livro = Lista_Livro.getSelectionModel().getSelectedItem();
         if (Livro == null) return;
         try {
@@ -157,7 +157,7 @@ public class LivroController implements Initializable {
     }
 
     @FXML
-    public void GravarButton(ActionEvent actionEvent) {
+    public void Btn_Gravar(ActionEvent actionEvent) {
         try {
             if (camposEstaoValidos()) {
                 if (Txt_Id.getText().trim().length() == 0) {

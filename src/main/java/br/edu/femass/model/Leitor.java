@@ -1,14 +1,18 @@
-package br.edu.femass.model.Leitor;
+package br.edu.femass.model;
 
-import java.util.Set;
+import java.util.List;
 
+import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.OneToMany;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 @Data
+@Entity
+@NoArgsConstructor
 public abstract class Leitor {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -18,7 +22,7 @@ public abstract class Leitor {
     protected String email;
     protected Boolean ativo;
     @OneToMany
-    protected Set<Emprestimo> emprestimos;
+    protected List<Emprestimo> emprestimos;
 
     public Leitor(String nome, String telefone, String email) {
         this.nome = nome;

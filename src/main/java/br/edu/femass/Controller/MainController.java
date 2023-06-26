@@ -72,7 +72,7 @@ public class MainController implements Initializable {
     @FXML
     private void handleBtn_Livro(ActionEvent event) {
         try {
-            Parent root = FXMLLoader.load(getClass().getResource("/fxml/CadastroGenero.fxml"));
+            Parent root = FXMLLoader.load(getClass().getResource("/fxml/CadastroLivro.fxml"));
             
             Scene scene = new Scene(root);
 

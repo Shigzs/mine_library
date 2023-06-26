@@ -1,8 +1,7 @@
-package br.edu.femass.model.Leitor;
+package br.edu.femass.model;
 
 import java.time.LocalDate;
 
-import br.edu.femass.model.Livro.Copia;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;

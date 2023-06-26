@@ -15,7 +15,7 @@ import java.util.ResourceBundle;
 
 import br.edu.femass.Dao.Dao;
 import br.edu.femass.Diversos.DiversosJavaFX;
-import br.edu.femass.model.Livro.Genero;
+import br.edu.femass.model.Genero;
 
 public class GeneroController implements Initializable {
     @FXML
@@ -68,7 +68,7 @@ public class GeneroController implements Initializable {
     }
 
     @FXML
-    public void ExcluirButton(ActionEvent actionEvent) {
+    public void Btn_Deletar(ActionEvent actionEvent) {
         Genero genero = Lista_Genero.getSelectionModel().getSelectedItem();
         if (genero == null) return;
         try {
@@ -96,7 +96,7 @@ public class GeneroController implements Initializable {
     }
 
     @FXML
-    public void GravarButton(ActionEvent actionEvent) {
+    public void Btn_Gravar(ActionEvent actionEvent) {
         try {
             if (camposEstaoValidos()) {
                 if (Txt_Id.getText().trim().length() == 0) {

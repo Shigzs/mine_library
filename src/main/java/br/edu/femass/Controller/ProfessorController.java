@@ -15,7 +15,7 @@ import java.util.ResourceBundle;
 
 import br.edu.femass.Dao.Dao;
 import br.edu.femass.Diversos.DiversosJavaFX;
-import br.edu.femass.model.Leitor.Professor;
+import br.edu.femass.model.Professor;
 
 public class ProfessorController implements Initializable {
     @FXML
@@ -80,7 +80,7 @@ public class ProfessorController implements Initializable {
     }
 
     @FXML
-    public void ExcluirButton(ActionEvent actionEvent) {
+    public void Btn_Deletar(ActionEvent actionEvent) {
         Professor professor = Lista_Professor.getSelectionModel().getSelectedItem();
         if (professor == null) return;
         try {
@@ -113,7 +113,7 @@ public class ProfessorController implements Initializable {
     }
 
     @FXML
-    public void GravarButton(ActionEvent actionEvent) {
+    public void Btn_Gravar(ActionEvent actionEvent) {
         try {
             if (camposEstaoValidos()) {
                 if (Txt_Id.getText().trim().length() == 0) {

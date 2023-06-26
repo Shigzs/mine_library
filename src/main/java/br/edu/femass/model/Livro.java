@@ -1,6 +1,7 @@
-package br.edu.femass.model.Livro;
+package br.edu.femass.model;
 
-import java.util.Set;
+import java.util.ArrayList;
+import java.util.List;
 
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Entity;
@@ -28,7 +29,7 @@ public class Livro {
     private Autor autor;
     private Boolean ativo;
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "livro")
-    private Set<Copia> copias;
+    private List<Copia> copias = new ArrayList<>();
 
     public Livro(String nome, Integer ano, String edicao, Genero genero, Autor autor) {
         this.nome = nome;

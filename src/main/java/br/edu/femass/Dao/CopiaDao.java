@@ -2,8 +2,8 @@ package br.edu.femass.Dao;
 
 import java.util.List;
 
-import br.edu.femass.model.Livro.Copia;
-import br.edu.femass.model.Livro.Livro;
+import br.edu.femass.model.Copia;
+import br.edu.femass.model.Livro;
 import jakarta.persistence.Query;
 
 public class CopiaDao extends Dao<Copia> {
